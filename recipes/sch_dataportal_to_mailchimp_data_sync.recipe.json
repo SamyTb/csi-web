@@ -3,18 +3,20 @@
   "user_id": 8402484,
   "name": "SCH - DataPortal to Mailchimp Data Sync",
   "created_at": "2026-07-27T18:48:36.923-07:00",
-  "updated_at": "2026-07-27T19:21:47.792-07:00",
+  "updated_at": "2026-08-04T19:41:22.397-07:00",
   "copy_count": 2,
   "trigger_application": "clock",
   "action_applications": [
     "data_portal_connector_8402484_1784041071",
     "mailchimp",
+    "logger",
     "email"
   ],
   "applications": [
     "clock",
     "data_portal_connector_8402484_1784041071",
     "mailchimp",
+    "logger",
     "email"
   ],
   "description": "",
@@ -58,6 +60,13 @@
       "provider": "data_portal_connector_8402484_1784041071",
       "skip_validation": false,
       "account_id": 19773938
+    },
+    {
+      "keyword": "application",
+      "name": "logger",
+      "provider": "logger",
+      "skip_validation": false,
+      "account_id": null
     }
   ],
   "trigger_closure": null,
@@ -1003,12 +1012,39 @@
                 "wizardFinished": true,
                 "title": "Custom action",
                 "description": "Custom <span class=\"provider\">action</span> in <span class=\"provider\">MailChimp</span> (Custom)"
+              },
+              {
+                "number": 5,
+                "provider": "logger",
+                "name": "log_message",
+                "as": "013379c5",
+                "keyword": "action",
+                "input": {
+                  "user_logs_enabled": "false",
+                  "message": "test"
+                },
+                "extended_input_schema": [
+                  {
+                    "control_type": "switch",
+                    "default": false,
+                    "disable_formula": true,
+                    "extends_schema": true,
+                    "hint": "Send a copy of the message to Workato logs.\n<a href=\"https://docs.workato.com/features/logging-service.html\" target=\"_blank\" class=\"ng-scope\">\n  Learn more\n</a>\n",
+                    "label": "Send to Workato log service",
+                    "name": "user_logs_enabled",
+                    "optional": true,
+                    "type": "string"
+                  }
+                ],
+                "uuid": "4ac36f2b-975e-4b8f-8fca-9b62d2123829",
+                "title": null,
+                "description": "Log <span class=\"provider\">message</span> to <span class=\"provider\">Job report</span>"
               }
             ],
             "uuid": "09de00bc-274f-4907-8b86-9e0b4b54efaa"
           },
           {
-            "number": 5,
+            "number": 6,
             "as": "b0f420b0",
             "keyword": "catch",
             "input": {
@@ -1017,7 +1053,7 @@
             },
             "block": [
               {
-                "number": 6,
+                "number": 7,
                 "provider": "email",
                 "name": "send_mail",
                 "as": "926bb08b",
@@ -1043,7 +1079,7 @@
     "title": null,
     "description": "<span class=\"provider\">Trigger</span> every 1 days at <span class=\"provider\">09:00:00 AM</span>"
   },
-  "version_no": 5,
+  "version_no": 6,
   "version_author_name": "Samy Toubal",
   "version_author_email": "samy.toubal@workato.com",
   "version_comment": null,
