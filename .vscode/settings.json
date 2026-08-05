@@ -1,0 +1,11 @@
+{
+  "browse-lite.startUrl": "https://app.workato.com",
+  "browse-lite.storeUserData": true,
+  "auto-run-command.rules": [
+    {
+      "condition": "always",
+      "command": "browse-lite.open",
+      "message": "Opening Workato browser panel"
+    }
+  ]
+}
