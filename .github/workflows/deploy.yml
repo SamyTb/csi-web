@@ -1,0 +1,31 @@
+name: Deploy to Workato
+
+on:
+  push:
+    branches: [develop, test]
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select target environment
+        id: target
+        run: |
+          case "${GITHUB_REF_NAME}" in
+            develop) echo "env_id=8704836" >> "$GITHUB_OUTPUT" ;;   # Workato Dev
+            test)    echo "env_id=8704837" >> "$GITHUB_OUTPUT" ;;   # Workato Test
+            *) echo "No Workato env mapped for branch ${GITHUB_REF_NAME}" >&2; exit 1 ;;
+          esac
+
+      - name: Deploy recipes to Workato
+        env:
+          WORKATO_API_TOKEN: ${{ secrets.WORKATO_API_TOKEN }}
+          TARGET_ENV_ID: ${{ steps.target.outputs.env_id }}
+          TARGET_FOLDER_NAME: CSI Web
+        run: python3 .github/scripts/deploy.py
