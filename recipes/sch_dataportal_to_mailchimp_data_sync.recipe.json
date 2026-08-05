@@ -1,0 +1,1052 @@
+{
+  "id": 74386205,
+  "user_id": 8402484,
+  "name": "SCH - DataPortal to Mailchimp Data Sync",
+  "created_at": "2026-07-27T18:48:36.923-07:00",
+  "updated_at": "2026-07-27T19:21:47.792-07:00",
+  "copy_count": 2,
+  "trigger_application": "clock",
+  "action_applications": [
+    "data_portal_connector_8402484_1784041071",
+    "mailchimp",
+    "email"
+  ],
+  "applications": [
+    "clock",
+    "data_portal_connector_8402484_1784041071",
+    "mailchimp",
+    "email"
+  ],
+  "description": "",
+  "project_id": 16674344,
+  "parameters_schema": [],
+  "parameters": {},
+  "folder_id": 31954158,
+  "running": false,
+  "job_succeeded_count": 1,
+  "job_failed_count": 1,
+  "lifetime_task_count": 1,
+  "last_run_at": "2026-07-27T19:12:46.242-07:00",
+  "stopped_at": "2026-07-27T19:12:48.023-07:00",
+  "webhook_url": null,
+  "stop_cause": null,
+  "config": [
+    {
+      "keyword": "application",
+      "name": "email",
+      "provider": "email",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "name": "clock",
+      "provider": "clock",
+      "skip_validation": false,
+      "account_id": null
+    },
+    {
+      "keyword": "application",
+      "name": "mailchimp",
+      "provider": "mailchimp",
+      "skip_validation": false,
+      "account_id": 19840214
+    },
+    {
+      "keyword": "application",
+      "name": "data_portal_connector_8402484_1784041071",
+      "provider": "data_portal_connector_8402484_1784041071",
+      "skip_validation": false,
+      "account_id": 19773938
+    }
+  ],
+  "trigger_closure": null,
+  "code": {
+    "number": 0,
+    "provider": "clock",
+    "name": "scheduled_event",
+    "as": "674ca06d",
+    "keyword": "trigger",
+    "dynamicPickListSelection": {
+      "time_unit": "Days"
+    },
+    "input": {
+      "time_unit": "days",
+      "trigger_every": "1",
+      "trigger_at": "09:00:00.000"
+    },
+    "extended_input_schema": [
+      {
+        "control_type": "integer",
+        "default": "5",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Define repeating schedule. Enter whole numbers only.This field can be set to a minimum of 5 minutes.",
+        "label": "Trigger every",
+        "name": "trigger_every",
+        "optional": false,
+        "suffix": {
+          "text": "days"
+        },
+        "type": "string"
+      },
+      {
+        "change_on_blur": true,
+        "control_type": "time",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Set a time to schedule the job using supported formats only. <a href=\"https://docs.workato.com/features/scheduler.html#supported-datetime-formats\" target=\"_blank\">Learn more</a>",
+        "label": "Trigger at",
+        "name": "trigger_at",
+        "optional": false,
+        "type": "string"
+      },
+      {
+        "control_type": "select",
+        "hint": "Select the timezone to use. Leave it blank to use <b>{{authUser.account_timezone}}</b>",
+        "label": "Timezone",
+        "name": "timezone",
+        "optional": true,
+        "pick_list": "timezone_id_global_pick_list",
+        "pick_list_connection_less": true,
+        "type": "string"
+      },
+      {
+        "control_type": "date_time",
+        "enforce_template_mode": true,
+        "extends_schema": true,
+        "hint": "Set date and time to start or leave blank to start immediately. <b>Once recipe has been run or tested, value cannot be changed.</b>",
+        "label": "Start after",
+        "name": "start_after",
+        "optional": true,
+        "parse_output": "date_time_conversion",
+        "since_field": true,
+        "type": "date_time",
+        "ignore_timezone": true,
+        "render_input": "date_time_conversion"
+      }
+    ],
+    "block": [
+      {
+        "number": 1,
+        "keyword": "try",
+        "input": {},
+        "block": [
+          {
+            "number": 2,
+            "provider": "data_portal_connector_8402484_1784041071",
+            "name": "list_audience_customers",
+            "as": "d95acfa5",
+            "keyword": "action",
+            "input": {
+              "customerAudienceId": "#{_dp('{\"pill_type\":\"project_property\",\"property_name\":\"audience_id\"}')}"
+            },
+            "uuid": "0d05beef-3ddd-4df6-be45-c1dd465c641d"
+          },
+          {
+            "number": 3,
+            "keyword": "if",
+            "input": {
+              "type": "compound",
+              "operand": "and",
+              "conditions": [
+                {
+                  "operand": "greater_than",
+                  "lhs": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"data_portal_connector_8402484_1784041071\",\"line\":\"d95acfa5\",\"path\":[\"count\"]}')}",
+                  "rhs": "0",
+                  "uuid": "07df4a96-8700-4293-a024-5758e91acbdf"
+                }
+              ]
+            },
+            "block": [
+              {
+                "number": 4,
+                "provider": "mailchimp",
+                "name": "__adhoc_http_action",
+                "as": "74c167ce",
+                "keyword": "action",
+                "input": {
+                  "mnemonic": "Custom action",
+                  "verb": "post",
+                  "request_type": "json",
+                  "response_type": "json",
+                  "path": "lists/a31d7bffff",
+                  "input": {
+                    "schema": "[{\"label\":\"Members\",\"of\":\"object\",\"properties\":[{\"control_type\":\"text\",\"label\":\"Email address\",\"type\":\"string\",\"name\":\"email_address\",\"details\":{\"real_name\":\"email_address\"}},{\"control_type\":\"text\",\"label\":\"Status\",\"type\":\"string\",\"name\":\"status\",\"details\":{\"real_name\":\"status\"}},{\"properties\":[{\"control_type\":\"text\",\"label\":\"FNAME\",\"type\":\"string\",\"name\":\"FNAME\",\"details\":{\"real_name\":\"FNAME\"}},{\"control_type\":\"text\",\"label\":\"LNAME\",\"type\":\"string\",\"name\":\"LNAME\",\"details\":{\"real_name\":\"LNAME\"}}],\"label\":\"Merge fields\",\"type\":\"object\",\"name\":\"merge_fields\",\"details\":{\"real_name\":\"merge_fields\"}},{\"control_type\":\"text\",\"label\":\"Tags\",\"of\":\"string\",\"type\":\"array\",\"name\":\"tags\",\"details\":{\"real_name\":\"tags\"}}],\"type\":\"array\",\"name\":\"members\",\"details\":{\"real_name\":\"members\"}},{\"control_type\":\"text\",\"label\":\"Update existing\",\"render_input\":\"boolean_conversion\",\"parse_output\":\"boolean_conversion\",\"toggle_hint\":\"Select from option list\",\"toggle_field\":{\"label\":\"Update existing\",\"control_type\":\"text\",\"toggle_hint\":\"Use custom value\",\"type\":\"boolean\",\"name\":\"update_existing\"},\"type\":\"boolean\",\"name\":\"update_existing\",\"details\":{\"real_name\":\"update_existing\"}}]",
+                    "data": {
+                      "members": {
+                        "____source": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"data_portal_connector_8402484_1784041071\",\"line\":\"d95acfa5\",\"path\":[\"items\"]}')}",
+                        "email_address": "#{_dp('{\"pill_type\":\"output\",\"provider\":\"data_portal_connector_8402484_1784041071\",\"line\":\"d95acfa5\",\"path\":[\"items\",{\"path_element_type\":\"current_item\"},\"primaryEmail\"]}')}",
+                        "status": "subscribed"
+                      },
+                      "update_existing": true
+                    }
+                  },
+                  "output": "[{\"label\":\"New members\",\"of\":\"object\",\"properties\":[{\"control_type\":\"text\",\"label\":\"ID\",\"type\":\"string\",\"name\":\"id\"},{\"control_type\":\"text\",\"label\":\"Contact ID\",\"type\":\"string\",\"name\":\"contact_id\"},{\"control_type\":\"text\",\"label\":\"Email address\",\"type\":\"string\",\"name\":\"email_address\"},{\"control_type\":\"text\",\"label\":\"Unique email ID\",\"type\":\"string\",\"name\":\"unique_email_id\"},{\"control_type\":\"text\",\"label\":\"Email type\",\"type\":\"string\",\"name\":\"email_type\"},{\"control_type\":\"text\",\"label\":\"Status\",\"type\":\"string\",\"name\":\"status\"},{\"properties\":[{\"control_type\":\"text\",\"label\":\"FNAME\",\"type\":\"string\",\"name\":\"FNAME\"},{\"control_type\":\"text\",\"label\":\"LNAME\",\"type\":\"string\",\"name\":\"LNAME\"},{\"control_type\":\"text\",\"label\":\"ADDRESS\",\"type\":\"string\",\"name\":\"ADDRESS\"},{\"control_type\":\"text\",\"label\":\"PHONE\",\"type\":\"string\",\"name\":\"PHONE\"},{\"control_type\":\"text\",\"label\":\"BIRTHDAY\",\"type\":\"string\",\"name\":\"BIRTHDAY\"},{\"control_type\":\"text\",\"label\":\"COMPANY\",\"type\":\"string\",\"name\":\"COMPANY\"}],\"label\":\"Merge fields\",\"type\":\"object\",\"name\":\"merge_fields\"},{\"properties\":[{\"control_type\":\"number\",\"label\":\"Avg open rate\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"avg_open_rate\"},{\"control_type\":\"number\",\"label\":\"Avg click rate\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"avg_click_rate\"}],\"label\":\"Stats\",\"type\":\"object\",\"name\":\"stats\"},{\"control_type\":\"text\",\"label\":\"Ip signup\",\"type\":\"string\",\"name\":\"ip_signup\"},{\"control_type\":\"text\",\"label\":\"Timestamp signup\",\"type\":\"string\",\"name\":\"timestamp_signup\"},{\"control_type\":\"text\",\"label\":\"Ip opt\",\"type\":\"string\",\"name\":\"ip_opt\"},{\"control_type\":\"text\",\"label\":\"Timestamp opt\",\"render_input\":\"date_time_conversion\",\"parse_output\":\"date_time_conversion\",\"type\":\"date_time\",\"name\":\"timestamp_opt\"},{\"control_type\":\"number\",\"label\":\"Member rating\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"member_rating\"},{\"control_type\":\"text\",\"label\":\"Last changed\",\"render_input\":\"date_time_conversion\",\"parse_output\":\"date_time_conversion\",\"type\":\"date_time\",\"name\":\"last_changed\"},{\"control_type\":\"text\",\"label\":\"Language\",\"type\":\"string\",\"name\":\"language\"},{\"control_type\":\"text\",\"label\":\"Vip\",\"render_input\":\"boolean_conversion\",\"parse_output\":\"boolean_conversion\",\"toggle_hint\":\"Select from option list\",\"toggle_field\":{\"label\":\"Vip\",\"control_type\":\"text\",\"toggle_hint\":\"Use custom value\",\"type\":\"boolean\",\"name\":\"vip\"},\"type\":\"boolean\",\"name\":\"vip\"},{\"control_type\":\"text\",\"label\":\"Email client\",\"type\":\"string\",\"name\":\"email_client\"},{\"properties\":[{\"control_type\":\"number\",\"label\":\"Latitude\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"latitude\"},{\"control_type\":\"number\",\"label\":\"Longitude\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"longitude\"},{\"control_type\":\"number\",\"label\":\"Gmtoff\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"gmtoff\"},{\"control_type\":\"number\",\"label\":\"Dstoff\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"dstoff\"},{\"control_type\":\"text\",\"label\":\"Country code\",\"type\":\"string\",\"name\":\"country_code\"},{\"control_type\":\"text\",\"label\":\"Timezone\",\"type\":\"string\",\"name\":\"timezone\"}],\"label\":\"Location\",\"type\":\"object\",\"name\":\"location\"},{\"control_type\":\"number\",\"label\":\"Tags count\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"tags_count\"},{\"label\":\"Tags\",\"of\":\"object\",\"properties\":[{\"control_type\":\"number\",\"label\":\"ID\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"id\"},{\"control_type\":\"text\",\"label\":\"Name\",\"type\":\"string\",\"name\":\"name\"}],\"type\":\"array\",\"name\":\"tags\"},{\"control_type\":\"text\",\"label\":\"List ID\",\"type\":\"string\",\"name\":\"list_id\"},{\"label\":\"Links\",\"of\":\"object\",\"properties\":[{\"control_type\":\"text\",\"label\":\"Rel\",\"type\":\"string\",\"name\":\"rel\"},{\"control_type\":\"text\",\"label\":\"Href\",\"type\":\"string\",\"name\":\"href\"},{\"control_type\":\"text\",\"label\":\"Method\",\"type\":\"string\",\"name\":\"method\"},{\"control_type\":\"text\",\"label\":\"Target schema\",\"type\":\"string\",\"name\":\"targetSchema\"}],\"type\":\"array\",\"name\":\"_links\"}],\"type\":\"array\",\"name\":\"new_members\"},{\"control_type\":\"number\",\"label\":\"Total created\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"total_created\"},{\"control_type\":\"number\",\"label\":\"Total updated\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"total_updated\"},{\"control_type\":\"number\",\"label\":\"Error count\",\"parse_output\":\"float_conversion\",\"type\":\"number\",\"name\":\"error_count\"},{\"label\":\"Links\",\"of\":\"object\",\"properties\":[{\"control_type\":\"text\",\"label\":\"Rel\",\"type\":\"string\",\"name\":\"rel\"},{\"control_type\":\"text\",\"label\":\"Href\",\"type\":\"string\",\"name\":\"href\"},{\"control_type\":\"text\",\"label\":\"Method\",\"type\":\"string\",\"name\":\"method\"},{\"control_type\":\"text\",\"label\":\"Target schema\",\"type\":\"string\",\"name\":\"targetSchema\"}],\"type\":\"array\",\"name\":\"_links\"}]",
+                  "response_headers": "[{\"control_type\":\"text\",\"label\":\"Content type\",\"type\":\"string\",\"name\":\"content_type\"},{\"control_type\":\"text\",\"label\":\"Link\",\"type\":\"string\",\"name\":\"link\"},{\"control_type\":\"text\",\"label\":\"Server\",\"type\":\"string\",\"name\":\"server\"},{\"control_type\":\"text\",\"label\":\"X blade\",\"type\":\"string\",\"name\":\"x_blade\"},{\"control_type\":\"text\",\"label\":\"X envoy upstream service time\",\"type\":\"string\",\"name\":\"x_envoy_upstream_service_time\"},{\"control_type\":\"text\",\"label\":\"X envoy decorator operation\",\"type\":\"string\",\"name\":\"x_envoy_decorator_operation\"},{\"control_type\":\"text\",\"label\":\"X request ID\",\"type\":\"string\",\"name\":\"x_request_id\"},{\"control_type\":\"text\",\"label\":\"X intuit upstream locality region\",\"type\":\"string\",\"name\":\"x_intuit_upstream_locality_region\"},{\"control_type\":\"text\",\"label\":\"Strict transport security\",\"type\":\"string\",\"name\":\"strict_transport_security\"},{\"control_type\":\"text\",\"label\":\"X spanid\",\"type\":\"string\",\"name\":\"x_spanid\"},{\"control_type\":\"text\",\"label\":\"X amzn trace ID\",\"type\":\"string\",\"name\":\"x_amzn_trace_id\"},{\"control_type\":\"text\",\"label\":\"X content type options\",\"type\":\"string\",\"name\":\"x_content_type_options\"},{\"control_type\":\"text\",\"label\":\"Intuit tid\",\"type\":\"string\",\"name\":\"intuit_tid\"},{\"control_type\":\"text\",\"label\":\"Vary\",\"type\":\"string\",\"name\":\"vary\"},{\"control_type\":\"text\",\"label\":\"Date\",\"render_input\":\"date_time_conversion\",\"parse_output\":\"date_time_conversion\",\"type\":\"date_time\",\"name\":\"date\"},{\"control_type\":\"text\",\"label\":\"Content length\",\"type\":\"string\",\"name\":\"content_length\"},{\"control_type\":\"text\",\"label\":\"Connection\",\"type\":\"string\",\"name\":\"connection\"}]"
+                },
+                "extended_output_schema": [
+                  {
+                    "label": "Body",
+                    "name": "body",
+                    "optional": true,
+                    "properties": [
+                      {
+                        "label": "New members",
+                        "optional": true,
+                        "of": "object",
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "ID",
+                            "optional": true,
+                            "type": "string",
+                            "name": "id"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Contact ID",
+                            "optional": true,
+                            "type": "string",
+                            "name": "contact_id"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Email address",
+                            "optional": true,
+                            "type": "string",
+                            "name": "email_address"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Unique email ID",
+                            "optional": true,
+                            "type": "string",
+                            "name": "unique_email_id"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Email type",
+                            "optional": true,
+                            "type": "string",
+                            "name": "email_type"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Status",
+                            "optional": true,
+                            "type": "string",
+                            "name": "status"
+                          },
+                          {
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "FNAME",
+                                "optional": true,
+                                "type": "string",
+                                "name": "FNAME"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "LNAME",
+                                "optional": true,
+                                "type": "string",
+                                "name": "LNAME"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "ADDRESS",
+                                "optional": true,
+                                "type": "string",
+                                "name": "ADDRESS"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "PHONE",
+                                "optional": true,
+                                "type": "string",
+                                "name": "PHONE"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "BIRTHDAY",
+                                "optional": true,
+                                "type": "string",
+                                "name": "BIRTHDAY"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "COMPANY",
+                                "optional": true,
+                                "type": "string",
+                                "name": "COMPANY"
+                              }
+                            ],
+                            "label": "Merge fields",
+                            "optional": true,
+                            "type": "object",
+                            "name": "merge_fields"
+                          },
+                          {
+                            "properties": [
+                              {
+                                "control_type": "number",
+                                "label": "Avg open rate",
+                                "parse_output": "float_conversion",
+                                "optional": true,
+                                "type": "number",
+                                "name": "avg_open_rate"
+                              },
+                              {
+                                "control_type": "number",
+                                "label": "Avg click rate",
+                                "parse_output": "float_conversion",
+                                "optional": true,
+                                "type": "number",
+                                "name": "avg_click_rate"
+                              }
+                            ],
+                            "label": "Stats",
+                            "optional": true,
+                            "type": "object",
+                            "name": "stats"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Ip signup",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ip_signup"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Timestamp signup",
+                            "optional": true,
+                            "type": "string",
+                            "name": "timestamp_signup"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Ip opt",
+                            "optional": true,
+                            "type": "string",
+                            "name": "ip_opt"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Timestamp opt",
+                            "render_input": "date_time_conversion",
+                            "parse_output": "date_time_conversion",
+                            "optional": true,
+                            "type": "date_time",
+                            "name": "timestamp_opt"
+                          },
+                          {
+                            "control_type": "number",
+                            "label": "Member rating",
+                            "parse_output": "float_conversion",
+                            "optional": true,
+                            "type": "number",
+                            "name": "member_rating"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Last changed",
+                            "render_input": "date_time_conversion",
+                            "parse_output": "date_time_conversion",
+                            "optional": true,
+                            "type": "date_time",
+                            "name": "last_changed"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Language",
+                            "optional": true,
+                            "type": "string",
+                            "name": "language"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Vip",
+                            "parse_output": "boolean_conversion",
+                            "render_input": "boolean_conversion",
+                            "toggle_hint": "Select from option list",
+                            "toggle_field": {
+                              "label": "Vip",
+                              "control_type": "text",
+                              "toggle_hint": "Use custom value",
+                              "type": "boolean",
+                              "name": "vip"
+                            },
+                            "optional": true,
+                            "type": "number",
+                            "name": "vip"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Email client",
+                            "optional": true,
+                            "type": "string",
+                            "name": "email_client"
+                          },
+                          {
+                            "properties": [
+                              {
+                                "control_type": "number",
+                                "label": "Latitude",
+                                "parse_output": "float_conversion",
+                                "optional": true,
+                                "type": "number",
+                                "name": "latitude"
+                              },
+                              {
+                                "control_type": "number",
+                                "label": "Longitude",
+                                "parse_output": "float_conversion",
+                                "optional": true,
+                                "type": "number",
+                                "name": "longitude"
+                              },
+                              {
+                                "control_type": "number",
+                                "label": "Gmtoff",
+                                "parse_output": "float_conversion",
+                                "optional": true,
+                                "type": "number",
+                                "name": "gmtoff"
+                              },
+                              {
+                                "control_type": "number",
+                                "label": "Dstoff",
+                                "parse_output": "float_conversion",
+                                "optional": true,
+                                "type": "number",
+                                "name": "dstoff"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Country code",
+                                "optional": true,
+                                "type": "string",
+                                "name": "country_code"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Timezone",
+                                "optional": true,
+                                "type": "string",
+                                "name": "timezone"
+                              }
+                            ],
+                            "label": "Location",
+                            "optional": true,
+                            "type": "object",
+                            "name": "location"
+                          },
+                          {
+                            "control_type": "number",
+                            "label": "Tags count",
+                            "parse_output": "float_conversion",
+                            "optional": true,
+                            "type": "number",
+                            "name": "tags_count"
+                          },
+                          {
+                            "label": "Tags",
+                            "optional": true,
+                            "of": "object",
+                            "properties": [
+                              {
+                                "control_type": "number",
+                                "label": "ID",
+                                "parse_output": "float_conversion",
+                                "optional": true,
+                                "type": "number",
+                                "name": "id"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Name",
+                                "optional": true,
+                                "type": "string",
+                                "name": "name"
+                              }
+                            ],
+                            "type": "array",
+                            "name": "tags"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "List ID",
+                            "optional": true,
+                            "type": "string",
+                            "name": "list_id"
+                          },
+                          {
+                            "label": "Links",
+                            "optional": true,
+                            "of": "object",
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Rel",
+                                "optional": true,
+                                "type": "string",
+                                "name": "rel"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Href",
+                                "optional": true,
+                                "type": "string",
+                                "name": "href"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Method",
+                                "optional": true,
+                                "type": "string",
+                                "name": "method"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Target schema",
+                                "optional": true,
+                                "type": "string",
+                                "name": "targetSchema"
+                              }
+                            ],
+                            "type": "array",
+                            "name": "_links"
+                          }
+                        ],
+                        "type": "array",
+                        "name": "new_members"
+                      },
+                      {
+                        "control_type": "number",
+                        "label": "Total created",
+                        "parse_output": "float_conversion",
+                        "optional": true,
+                        "type": "number",
+                        "name": "total_created"
+                      },
+                      {
+                        "control_type": "number",
+                        "label": "Total updated",
+                        "parse_output": "float_conversion",
+                        "optional": true,
+                        "type": "number",
+                        "name": "total_updated"
+                      },
+                      {
+                        "control_type": "number",
+                        "label": "Error count",
+                        "parse_output": "float_conversion",
+                        "optional": true,
+                        "type": "number",
+                        "name": "error_count"
+                      },
+                      {
+                        "label": "Links",
+                        "optional": true,
+                        "of": "object",
+                        "properties": [
+                          {
+                            "control_type": "text",
+                            "label": "Rel",
+                            "optional": true,
+                            "type": "string",
+                            "name": "rel"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Href",
+                            "optional": true,
+                            "type": "string",
+                            "name": "href"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Method",
+                            "optional": true,
+                            "type": "string",
+                            "name": "method"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Target schema",
+                            "optional": true,
+                            "type": "string",
+                            "name": "targetSchema"
+                          }
+                        ],
+                        "type": "array",
+                        "name": "_links"
+                      }
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "label": "Headers",
+                    "name": "headers",
+                    "optional": true,
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Content type",
+                        "optional": true,
+                        "type": "string",
+                        "name": "content_type"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Link",
+                        "optional": true,
+                        "type": "string",
+                        "name": "link"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Server",
+                        "optional": true,
+                        "type": "string",
+                        "name": "server"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X blade",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_blade"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X envoy upstream service time",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_envoy_upstream_service_time"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X envoy decorator operation",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_envoy_decorator_operation"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X request ID",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_request_id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X intuit upstream locality region",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_intuit_upstream_locality_region"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Strict transport security",
+                        "optional": true,
+                        "type": "string",
+                        "name": "strict_transport_security"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X spanid",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_spanid"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X amzn trace ID",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_amzn_trace_id"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "X content type options",
+                        "optional": true,
+                        "type": "string",
+                        "name": "x_content_type_options"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Intuit tid",
+                        "optional": true,
+                        "type": "string",
+                        "name": "intuit_tid"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Vary",
+                        "optional": true,
+                        "type": "string",
+                        "name": "vary"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Date",
+                        "render_input": "date_time_conversion",
+                        "parse_output": "date_time_conversion",
+                        "optional": true,
+                        "type": "date_time",
+                        "name": "date"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Content length",
+                        "optional": true,
+                        "type": "string",
+                        "name": "content_length"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Connection",
+                        "optional": true,
+                        "type": "string",
+                        "name": "connection"
+                      }
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "extended_input_schema": [
+                  {
+                    "control_type": "text",
+                    "hint": "Base URI is <b>https://us16.api.mailchimp.com/3.0/</b> - path will be appended to this URI. Use absolute URI to override this base URI.",
+                    "label": "Path",
+                    "name": "path",
+                    "optional": false,
+                    "type": "string"
+                  },
+                  {
+                    "control_type": "select",
+                    "default": "json",
+                    "extends_schema": true,
+                    "label": "Request type",
+                    "name": "request_type",
+                    "optional": true,
+                    "pick_list": [
+                      [
+                        "JSON request body",
+                        "json"
+                      ],
+                      [
+                        "URL encoded form",
+                        "urlencoded"
+                      ],
+                      [
+                        "Multipart form",
+                        "multipart"
+                      ],
+                      [
+                        "Raw JSON request body",
+                        "raw"
+                      ],
+                      [
+                        "XML request body",
+                        "xml"
+                      ],
+                      [
+                        "Plain text",
+                        "text"
+                      ],
+                      [
+                        "Raw request body",
+                        "rawdata"
+                      ]
+                    ],
+                    "sticky": false,
+                    "type": "string"
+                  },
+                  {
+                    "control_type": "select",
+                    "default": "json",
+                    "extends_schema": true,
+                    "label": "Response type",
+                    "name": "response_type",
+                    "optional": true,
+                    "pick_list": [
+                      [
+                        "JSON response",
+                        "json"
+                      ],
+                      [
+                        "Raw JSON Response",
+                        "raw"
+                      ],
+                      [
+                        "XML Response",
+                        "xml2"
+                      ],
+                      [
+                        "Raw response",
+                        "text"
+                      ]
+                    ],
+                    "sticky": false,
+                    "type": "string"
+                  },
+                  {
+                    "label": "Input",
+                    "name": "input",
+                    "optional": true,
+                    "properties": [
+                      {
+                        "control_type": "schema-designer",
+                        "label": "Request body parameters",
+                        "extends_schema": true,
+                        "schema_neutral": true,
+                        "sample_data_type": "json_input",
+                        "sticky": false,
+                        "add_field_label": "Add request body parameter",
+                        "optional": true,
+                        "type": "string",
+                        "name": "schema"
+                      },
+                      {
+                        "properties": [
+                          {
+                            "label": "Members",
+                            "details": {
+                              "real_name": "members"
+                            },
+                            "sticky": true,
+                            "optional": true,
+                            "of": "object",
+                            "properties": [
+                              {
+                                "control_type": "text",
+                                "label": "Email address",
+                                "details": {
+                                  "real_name": "email_address"
+                                },
+                                "optional": true,
+                                "type": "string",
+                                "name": "email_address"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Status",
+                                "details": {
+                                  "real_name": "status"
+                                },
+                                "optional": true,
+                                "type": "string",
+                                "name": "status"
+                              },
+                              {
+                                "properties": [
+                                  {
+                                    "control_type": "text",
+                                    "label": "FNAME",
+                                    "details": {
+                                      "real_name": "FNAME"
+                                    },
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "FNAME"
+                                  },
+                                  {
+                                    "control_type": "text",
+                                    "label": "LNAME",
+                                    "details": {
+                                      "real_name": "LNAME"
+                                    },
+                                    "optional": true,
+                                    "type": "string",
+                                    "name": "LNAME"
+                                  }
+                                ],
+                                "label": "Merge fields",
+                                "details": {
+                                  "real_name": "merge_fields"
+                                },
+                                "optional": true,
+                                "type": "object",
+                                "name": "merge_fields"
+                              },
+                              {
+                                "control_type": "text",
+                                "label": "Tags",
+                                "details": {
+                                  "real_name": "tags"
+                                },
+                                "optional": true,
+                                "of": "string",
+                                "type": "array",
+                                "name": "tags"
+                              }
+                            ],
+                            "type": "array",
+                            "name": "members"
+                          },
+                          {
+                            "control_type": "text",
+                            "label": "Update existing",
+                            "parse_output": "boolean_conversion",
+                            "render_input": "boolean_conversion",
+                            "toggle_hint": "Select from option list",
+                            "toggle_field": {
+                              "label": "Update existing",
+                              "control_type": "text",
+                              "toggle_hint": "Use custom value",
+                              "type": "boolean",
+                              "name": "update_existing"
+                            },
+                            "details": {
+                              "real_name": "update_existing"
+                            },
+                            "sticky": true,
+                            "optional": true,
+                            "type": "number",
+                            "name": "update_existing"
+                          }
+                        ],
+                        "label": "Data",
+                        "optional": true,
+                        "type": "object",
+                        "name": "data"
+                      }
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "control_type": "key_value",
+                    "empty_list_text": "Refer to the API documentation and add required headers to this HTTP request",
+                    "empty_list_title": "Does this HTTP request require headers?",
+                    "item_label": "Header",
+                    "label": "Request headers",
+                    "name": "request_headers",
+                    "of": "object",
+                    "optional": true,
+                    "properties": [
+                      {
+                        "control_type": "text",
+                        "label": "Name",
+                        "optional": true,
+                        "type": "string",
+                        "name": "name"
+                      },
+                      {
+                        "control_type": "text",
+                        "label": "Value",
+                        "optional": true,
+                        "type": "string",
+                        "name": "value"
+                      }
+                    ],
+                    "type": "array"
+                  },
+                  {
+                    "control_type": "schema-designer",
+                    "extends_schema": true,
+                    "label": "Response body",
+                    "name": "output",
+                    "optional": true,
+                    "sample_data_type": "json_http",
+                    "sticky": true,
+                    "type": "string",
+                    "schema_neutral": true
+                  },
+                  {
+                    "control_type": "schema-designer",
+                    "extends_schema": true,
+                    "label": "Response headers",
+                    "name": "response_headers",
+                    "optional": true,
+                    "sample_data_type": "json_http",
+                    "sticky": false,
+                    "type": "string",
+                    "schema_neutral": true
+                  },
+                  {
+                    "control_type": "checkbox",
+                    "label": "Inspect",
+                    "name": "inspect",
+                    "ngIf": "false",
+                    "optional": true,
+                    "parse_output": "float_conversion",
+                    "type": "number"
+                  }
+                ],
+                "visible_config_fields": [
+                  "mnemonic",
+                  "verb",
+                  "path",
+                  "request_type",
+                  "response_type",
+                  "input",
+                  "input.schema",
+                  "input.data",
+                  "input.data.members",
+                  "input.data.update_existing",
+                  "output",
+                  "response_headers",
+                  "input.data.members.email_address",
+                  "input.data.members.status",
+                  "input.data.members.merge_fields.FNAME",
+                  "input.data.members.merge_fields.LNAME",
+                  "input.data.members.tags",
+                  "request_headers"
+                ],
+                "comment": "Batch Create Members",
+                "uuid": "71b2ffd9-adec-4435-acdd-afda10a3dbc0",
+                "wizardFinished": true,
+                "title": "Custom action",
+                "description": "Custom <span class=\"provider\">action</span> in <span class=\"provider\">MailChimp</span> (Custom)"
+              }
+            ],
+            "uuid": "09de00bc-274f-4907-8b86-9e0b4b54efaa"
+          },
+          {
+            "number": 5,
+            "as": "b0f420b0",
+            "keyword": "catch",
+            "input": {
+              "max_retry_count": "0",
+              "retry_interval": "2"
+            },
+            "block": [
+              {
+                "number": 6,
+                "provider": "email",
+                "name": "send_mail",
+                "as": "926bb08b",
+                "keyword": "action",
+                "input": {
+                  "email_type": "plain_text",
+                  "to": "samy.toubal@workato.com",
+                  "subject": "Data Sync Error",
+                  "body": "Error Type : #{_dp('{\"pill_type\":\"output\",\"provider\":\"catch\",\"line\":\"b0f420b0\",\"path\":[\"type\"]}')}\nError Message : #{_dp('{\"pill_type\":\"output\",\"provider\":\"catch\",\"line\":\"b0f420b0\",\"path\":[\"message\"]}')}\nCustomer ID : #{_dp('{\"pill_type\":\"output\",\"provider\":\"data_portal_connector_8402484_1784041071\",\"line\":\"d95acfa5\",\"path\":[\"items\",{\"path_element_type\":\"current_item\"},\"customerId\"]}')}"
+                },
+                "uuid": "9356f1e5-a1ef-4747-aa31-b5e9e1e89d7d",
+                "title": null,
+                "description": null
+              }
+            ],
+            "uuid": "46ed08f4-a416-4587-9ab1-a35b8e7abb1d"
+          }
+        ],
+        "uuid": "1b665e9a-080c-4fa6-bdf7-dd7eeaee6c42"
+      }
+    ],
+    "uuid": "2687305e-d647-4521-a175-a6292e6fa372",
+    "title": null,
+    "description": "<span class=\"provider\">Trigger</span> every 1 days at <span class=\"provider\">09:00:00 AM</span>"
+  },
+  "version_no": 5,
+  "version_author_name": "Samy Toubal",
+  "version_author_email": "samy.toubal@workato.com",
+  "version_comment": null,
+  "author_name": "Kevin Gay",
+  "last_job_started_at": "2026-07-27T19:12:46.783-07:00"
+}
