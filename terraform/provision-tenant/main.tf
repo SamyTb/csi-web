@@ -10,7 +10,13 @@
 # Usage:
 #   export TF_VAR_workato_api_token=<OEM API token>
 #   terraform init
-#   terraform apply
+#   terraform workspace new <tenant-slug>        # one workspace per tenant
+#   terraform apply -var 'tenant_name=CSI Web - UAT'
+#
+# Optional parameters:
+#   -var 'external_id=csiweb-uat-001'            # default: derived from name
+#   -var 'notification_email=ops@example.com'
+#   -var 'exclude_projects=["Home","Sandbox"]'   # default: ["Home"]
 # =============================================================================
 
 terraform {
@@ -31,15 +37,26 @@ variable "workato_api_token" {
 }
 
 variable "tenant_name" {
-  description = "Display name of the managed customer to create"
+  description = "Display name of the managed customer to create (required), e.g. -var 'tenant_name=CSI Web - UAT'"
   type        = string
-  default     = "CSI Web - Replicated Tenant"
+
+  validation {
+    condition     = length(trimspace(var.tenant_name)) > 0
+    error_message = "tenant_name must not be empty."
+  }
 }
 
 variable "external_id" {
-  description = "External ID for the managed customer"
+  description = "External ID for the managed customer; derived from tenant_name if omitted"
   type        = string
-  default     = "csiweb-replica-001"
+  default     = ""
+}
+
+locals {
+  # "CSI Web - UAT" -> "csi-web-uat" when no explicit external_id is given
+  external_id = var.external_id != "" ? var.external_id : trim(
+    replace(replace(lower(var.tenant_name), "/[^a-z0-9]+/", "-"), "--", "-"), "-"
+  )
 }
 
 variable "notification_email" {
@@ -72,7 +89,7 @@ resource "restapi_object" "managed_customer" {
   path = "/managed_users"
   data = jsonencode({
     name               = var.tenant_name
-    external_id        = var.external_id
+    external_id        = local.external_id
     notification_email = var.notification_email
   })
 }
