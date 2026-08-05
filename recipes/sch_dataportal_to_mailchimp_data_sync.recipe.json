@@ -3,7 +3,7 @@
   "user_id": 8402484,
   "name": "SCH - DataPortal to Mailchimp Data Sync",
   "created_at": "2026-07-27T18:48:36.923-07:00",
-  "updated_at": "2026-08-04T19:41:22.397-07:00",
+  "updated_at": "2026-08-05T08:11:38.775-07:00",
   "copy_count": 2,
   "trigger_application": "clock",
   "action_applications": [
@@ -77,12 +77,11 @@
     "as": "674ca06d",
     "keyword": "trigger",
     "dynamicPickListSelection": {
-      "time_unit": "Days"
+      "time_unit": "Minutes"
     },
     "input": {
-      "time_unit": "days",
-      "trigger_every": "1",
-      "trigger_at": "09:00:00.000"
+      "time_unit": "minutes",
+      "trigger_every": "5"
     },
     "extended_input_schema": [
       {
@@ -95,19 +94,8 @@
         "name": "trigger_every",
         "optional": false,
         "suffix": {
-          "text": "days"
+          "text": "minutes"
         },
-        "type": "string"
-      },
-      {
-        "change_on_blur": true,
-        "control_type": "time",
-        "enforce_template_mode": true,
-        "extends_schema": true,
-        "hint": "Set a time to schedule the job using supported formats only. <a href=\"https://docs.workato.com/features/scheduler.html#supported-datetime-formats\" target=\"_blank\">Learn more</a>",
-        "label": "Trigger at",
-        "name": "trigger_at",
-        "optional": false,
         "type": "string"
       },
       {
@@ -1039,12 +1027,39 @@
                 "uuid": "4ac36f2b-975e-4b8f-8fca-9b62d2123829",
                 "title": null,
                 "description": "Log <span class=\"provider\">message</span> to <span class=\"provider\">Job report</span>"
+              },
+              {
+                "number": 6,
+                "provider": "logger",
+                "name": "log_message",
+                "as": "a7229fd8",
+                "keyword": "action",
+                "input": {
+                  "user_logs_enabled": "false",
+                  "message": "test 2"
+                },
+                "extended_input_schema": [
+                  {
+                    "control_type": "switch",
+                    "default": false,
+                    "disable_formula": true,
+                    "extends_schema": true,
+                    "hint": "Send a copy of the message to Workato logs.\n<a href=\"https://docs.workato.com/features/logging-service.html\" target=\"_blank\" class=\"ng-scope\">\n  Learn more\n</a>\n",
+                    "label": "Send to Workato log service",
+                    "name": "user_logs_enabled",
+                    "optional": true,
+                    "type": "string"
+                  }
+                ],
+                "uuid": "e08e58da-7ac0-46fe-8678-47e2d0e3f0e5",
+                "title": null,
+                "description": "Log <span class=\"provider\">message</span> to <span class=\"provider\">Job report</span>"
               }
             ],
             "uuid": "09de00bc-274f-4907-8b86-9e0b4b54efaa"
           },
           {
-            "number": 6,
+            "number": 7,
             "as": "b0f420b0",
             "keyword": "catch",
             "input": {
@@ -1053,7 +1068,7 @@
             },
             "block": [
               {
-                "number": 7,
+                "number": 8,
                 "provider": "email",
                 "name": "send_mail",
                 "as": "926bb08b",
@@ -1077,9 +1092,9 @@
     ],
     "uuid": "2687305e-d647-4521-a175-a6292e6fa372",
     "title": null,
-    "description": "<span class=\"provider\">Trigger</span> every 1 days at <span class=\"provider\">09:00:00 AM</span>"
+    "description": "<span class=\"provider\">Trigger</span> every 5 minutes"
   },
-  "version_no": 6,
+  "version_no": 8,
   "version_author_name": "Samy Toubal",
   "version_author_email": "samy.toubal@workato.com",
   "version_comment": null,
